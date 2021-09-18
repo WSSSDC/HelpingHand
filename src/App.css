@@ -1,38 +1,105 @@
+
+
 .App {
-  text-align: center;
+  height: 100vh;
+  width: 100vw;
+  padding: 1vw;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.editor {
+  width: 70vw;
+  height: 100%;
+  border-radius: 25px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.bot {
+  width: 26vw;
+  height: 100%;
+  border-radius: 25px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+textarea {
+  width: 100%;
+  height: 100px;
+  border: none;
+}
+
+textarea:focus {
+  outline: 0;
+}
+
+.CodeEditorArea {
+  height: 70vh !important;
+  width: 90%;
+}
+
+.ConsoleArea {
+  border-top: 5px solid grey;
+  height: 26.2vh !important;
+}
+
+.CodeEditorArea textarea, .CodeEditorArea > * {
+  border-top-left-radius: 25x !important;
+  border-top-right-radius: 25px !important;
+}
+
+.ConsoleArea textarea, .ConsoleArea > * {
+  /* border-bottom-left-radius: 25x !important;
+  border-bottom-right-radius: 25px !important; */
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+}
+
+.CodeMirror {
+  height: 100% !important;
+}
+
+hr {
+  height: 5px;
+  color: black;
+}
+
+.runbtn {
+  width: 180px;
+  height: 35px;
+  border-radius: 50px;
+  background-color: #00D631;
   color: white;
+  margin: auto;
+  text-align: center;
+  margin-top: 10px;
+  margin-right: 20px;
+  border: none;
+  float: right;
+  font-weight: bold;
+  font-size: 20px;
 }
 
-.App-link {
-  color: #61dafb;
+.msgin {
+  padding-left: 12px;
+  margin: 20px;
+  border-radius: 20px;
+  border: 1px solid lightgray;
+  outline: none;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.messages {
+  line-height: 100%;
+  text-align: start;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.from, .to {
+  font-size: 25px;
+  line-height: 25px;
+  font-weight: bold;
+}
+
+.from {
+  text-align: start;
+}
+
+.to {
+  text-align: end;
 }
