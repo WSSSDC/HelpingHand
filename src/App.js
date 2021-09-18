@@ -3,9 +3,20 @@ import './App.css';
 import React, { useState } from 'react';
 import {Controlled as CodeMirror} from 'react-codemirror2';
 import OpenAI from 'openai-api';
+import clearIcon from './icons/clear.svg';
+import completeIcon from './icons/complete.svg';
+import fixIcon from './icons/fix.svg';
+import runIcon from './icons/run.svg';
+import loadingIcon from './icons/loading.gif';
+
 require('codemirror/lib/codemirror.css');
 require('codemirror/mode/javascript/javascript');
 require('codemirror/mode/python/python');
+const verbCheck = require('verb-check');
+const prettier = require("prettier");
+var pythonFormat = require('python-format');
+
+
 
 function App() {
 
@@ -15,12 +26,71 @@ function App() {
   }]);
 
   const [tempCode, setTempCode] = useState('');
-
   const [consoleText, setConsole] = useState('');
+  const [outputText, setOutput] = useState('');
+  const [iconLoading, setIconLoading] = useState([]);
+  const [currentInput, setCurrentInput] = useState([]);
+  const [currentInputLines, setCurrentInputLines] = useState([]);
 
-  const OPENAI_API_KEY = 'openai';
+  function removeItem(item) {
+    setIconLoading(iconLoading.filter(e => e != item))
+  }
+
+  function addIcon(item) {
+    setIconLoading(iconLoading.concat([item]))
+  }
+ 
+  const OPENAI_API_KEY = 'sk-vGvqOZulHcaa8JqIKEStF5EDFbmCxHuzM7ux2fcE';
 
   const openai = new OpenAI(OPENAI_API_KEY);
+
+  function isIllegalEdit(editor, data, value) {
+    var lines = outputText.split('\n');
+
+    if (data.from.line != lines.length - 1) {
+      return true;
+    } else if (data.from.ch + 1 > lines[lines.length - 1].length) {
+      return false;
+    }
+
+    return true;
+  }
+
+  function getInput(editor, data, value) {
+    var defaultLines = outputText.split('\n');
+    var editedLines = value.split('\n');
+
+    return editedLines[defaultLines.length - 1].substring(defaultLines[defaultLines.length - 1].length)
+  }
+
+  function runCode(input = []) {
+    setCurrentInput(input)
+    addIcon('run');
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", 'https://HTN21-Bridge-Mine.con266667.repl.co/run', true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(JSON.stringify({
+        code: tempCode,
+        id: '123000',
+        language: 'python',
+        input: input
+      }));
+      xhr.onload = function() {
+          var data = JSON.parse(this.responseText);
+          console.log(data);
+          setConsole(data['output']);
+          setOutput(data['output']);
+          if (data['needs_input']) {
+            setCurrentInputLines(currentInputLines.concat([data['output'].split('\n').length - 1]))
+            console.log(currentInputLines.concat([data['output'].split('\n').length - 1]))
+          }
+          removeItem('run');
+      };
+      xhr.onerror = function() {
+        alert("Server Error")
+        removeItem('run');
+      }
+  }
 
   return (
     <div className="App">
@@ -39,7 +109,8 @@ function App() {
               }}
               onBeforeChange={(editor, data, value) => {
                 // setTempCode(value)
-                setTempCode(value);
+                setTempCode(pythonFormat(value));
+                
               }}
               onSelection={(editor, data) => {
                 // var selected = window.getSelection().toString();
@@ -50,22 +121,16 @@ function App() {
             />
             </div>
             <div className='col'>
+              <div className='row'>
               <button className='runbtn' onClick={async () => {
-                var xhr = new XMLHttpRequest();
-                xhr.open("POST", 'https://HTN21-Bridge.itspedram.repl.co/run', true);
-                xhr.setRequestHeader('Content-Type', 'application/json');
-                xhr.send(JSON.stringify({
-                    code: tempCode,
-                }));
-                xhr.onload = function() {
-                    var data = this.responseText;
-                    console.log(this);
-                    setConsole(data);
-                };
+                runCode()
               }}>
-              RUN
+              <img src={iconLoading.includes('run') ? loadingIcon : runIcon}></img>
             </button>
+            </div>
+            <div className='row'>
             <button className='runbtn' onClick={async () => {
+              addIcon('complete')
                 const gptResponse = await openai.complete({
                   engine: 'davinci-codex',
                   prompt: tempCode,
@@ -81,10 +146,14 @@ function App() {
               });
           
               setTempCode(tempCode + gptResponse.data.choices[0].text);
+              removeItem('complete')
             }}>
-              COMPLETE
+              <img src={iconLoading.includes('complete') ? loadingIcon : completeIcon}></img>
             </button>
+            </div>
+            <div className='row'>
             <button className='runbtn' onClick={async () => {
+              addIcon('fix')
                 const gptResponse = await openai.complete({
                   engine: 'davinci-codex',
                   prompt: `##### Fix bugs in the below function
@@ -107,15 +176,17 @@ function App() {
               });
           
               setTempCode(gptResponse.data.choices[0].text);
+              removeItem('fix')
             }}>
-              FIX
+              <img src={iconLoading.includes('fix') ? loadingIcon : fixIcon}></img>
             </button>
-            <div className='col'>
+            </div>
+            <div className='row'>
               <button className='runbtn' onClick={() => {
                 setTempCode('');
                 setConsole('');
               }}>
-              CLEAR
+              <img src={clearIcon}></img>
             </button>
             </div>
             </div>
@@ -127,10 +198,16 @@ function App() {
               mode: 'python',
               //theme: 'material',
               lineNumbers: true,
-              readOnly: true
             }}
-            onChange={(editor, data, value) => {
-
+            onBeforeChange={(editor, data, value) => {
+              setConsole(value);
+              if(isIllegalEdit(editor, data, value)) {
+                setConsole(outputText)
+              }
+              if(data.text.length == 2) {
+                setConsole(outputText)
+                runCode([...currentInput, getInput(editor, data, value)])
+              }
             }}
           />
           </div>
@@ -139,10 +216,10 @@ function App() {
           <div className="card border-0 shadow-lg bot">
               <div className='h-100 p-3 messages'>
                 {
-                  messages.map(message => <div className={message.direction + ' py-3'}>{message.message}</div>)
+                  messages.map(message => <div className={message.direction + ' py-3'}>{(message.direction == 'from' ? '> ' : '') + message.message}</div>)
                 }
               </div>
-                <input type='textfield' className='msgin' onKeyPress={async event => {
+                <input type='textfield' className='msgin' placeholder='Type a message...' onKeyPress={async event => {
                   if(event.key === 'Enter') {
                     const input = event.target.value;
                     event.target.value = '';
@@ -151,12 +228,13 @@ function App() {
                         'message': input,
                         'direction': 'to'
                       }, ...messages])
-                    
-                    if(input.toLowerCase().startsWith("write")) {
+
+                    if(verbCheck.check(input.split(' ')[0])) {
+                      console.log(`${tempCode}\n"""\n${input}\n"""`);
                       const gptResponse = await openai.complete({
                         engine: 'davinci-codex',
-                        prompt: `"""\n${input}\n"""`,
-                        maxTokens: 100,
+                        prompt: `#Python 3\n${tempCode}\n"""\n${input}\n"""`,
+                        maxTokens: 120,
                         temperature: 0.9,
                         topP: 1,
                         presencePenalty: 0,
@@ -164,7 +242,7 @@ function App() {
                         bestOf: 1,
                         n: 1,
                         stream: false,
-                        stop: ['"""']
+                        stop: ['"""', '\n\n\n']
                     });
                     setTempCode(tempCode + gptResponse.data.choices[0].text)
                     setMessages([

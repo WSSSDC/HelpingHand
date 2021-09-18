@@ -52,6 +52,7 @@ textarea:focus {
 
 .CodeMirror {
   height: 100% !important;
+  font-family: 'Menlo Regular' !important;
 }
 
 hr {
@@ -60,22 +61,21 @@ hr {
 }
 
 .runbtn {
-  width: 180px;
-  height: 35px;
-  border-radius: 50px;
-  background-color: #00D631;
-  color: white;
-  margin: auto;
-  text-align: center;
-  margin-top: 10px;
-  margin-right: 20px;
   border: none;
+  outline: none;
+  background-color: transparent;
+  margin-top: 20px;
   float: right;
-  font-weight: bold;
-  font-size: 20px;
+  margin-left: 50px;
+}
+
+.runbtn > img {
+  width: 45px;
+  height: 45px;
 }
 
 .msgin {
+  height: 40px;
   padding-left: 12px;
   margin: 20px;
   border-radius: 20px;
@@ -93,7 +93,7 @@ hr {
 .from, .to {
   font-size: 25px;
   line-height: 25px;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .from {
