@@ -125,7 +125,7 @@ function App() {
               <button className='runbtn' onClick={async () => {
                 runCode()
               }}>
-              <img src={iconLoading.includes('run') ? loadingIcon : runIcon}></img>
+                <img src={iconLoading.includes('run') ? loadingIcon : runIcon}></img>
             </button>
             </div>
             <div className='row'>

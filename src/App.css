@@ -67,6 +67,14 @@ hr {
   margin-top: 20px;
   float: right;
   margin-left: 50px;
+  max-width: 90%;
+  max-height: 200px;
+  /* padding: 10px; */
+  transition: transform .2s;
+}
+
+.runbtn:hover {
+  transform: scale(1.2);
 }
 
 .runbtn > img {
@@ -102,4 +110,24 @@ hr {
 
 .to {
   text-align: end;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
 }
