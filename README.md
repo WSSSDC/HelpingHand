@@ -1,70 +1,42 @@
-# Getting Started with Create React App
+# TBD
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 💡 Inspiration
+We wanted to create a one-stop-shop for computer science students wanting to learn python, without having to sift through google, stackoverflow, and the documentation. While there are solutions like kite or GitHub Copilot, neither are available to ask questions such as: "What is a for loop?" or "How do I write an if statement?".
 
-## Available Scripts
+## 📱 What it does
+TBD is an online IDE with 
+## 🛠 How we built it
+ - **React.js**: We used react.js to create the main site and 
+ - **OpenAI's Codex & GPT-3**: We used these services for our interactive code generation and question answer features
+ - **Flask**: We used Flask for the API server
+ - **Repl.it**: We used Repl.it to host the python backend
 
-In the project directory, you can run:
+## 🛑 Challenges we ran into
+- Figuring out how to work with programs that require an input
+- Creating our own bash shell
 
-### `yarn start`
+## ✅ Accomplishments that we're proud of
+ - Writing a React.js site, we mostly make flutter apps and we wanted to try and change it up a bit
+ - Creating our own python backend that executes the code, and returns the output
+ - Creating our own API
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## 📖 What we learned
+ - Mutlrithreading in python
+ - Subprocesses in python
+ - Postman
+ - Using flask
+ - Using React.js was a new experince for us
+ - Lot's of linux
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## 🤔 What's next for TBD
+ - Add different themes
+ - Integrate documentation for keywords in a tooltip
+ - Add the ability to work with multiple files
+ - Implement user accounts to allow for online saving of projects
+ - Monetize, Monetize, Monetize
 
-### `yarn test`
+## Gallery
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `yarn build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 🙇‍♂️ Acknowledgements
+We would like to thank Hack the North for the opportunity to come up with and create TBD, we would also like to thank OpenAI for Codex and GPT-3.
