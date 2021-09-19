@@ -6,7 +6,7 @@ We wanted to create a one-stop-shop for computer science students wanting to lea
 ## 📱 What it does
 TBD is an online IDE that is made to assist newcomers to computer science with coding! TBD will help you by answering all your programming questions and writing solutions for you. If you need help debugging your program, TBD will also help debug it for you!
 ## 🛠 How we built it
- - **React.js**: We used react.js to create the main site and 
+ - **React.js**: We used react.js to create the main site 
  - **OpenAI's Codex & GPT-3**: We used these services for our interactive code generation and question answer features
  - **Flask**: We used Flask for the API server
  - **Repl.it**: We used Repl.it to host the Python backend
@@ -14,6 +14,7 @@ TBD is an online IDE that is made to assist newcomers to computer science with c
 ## 🛑 Challenges we ran into
 - Creating an interactive shell that allowed for seamless input/output between the client and our backend.
 - Creating a complex API that would allow us to add lots of functions to our web client.
+- Creating a system for managing files
 
 ## ✅ Accomplishments that we're proud of
  - Writing a React.js site, we mostly make flutter apps and we wanted to try and change it up a bit
