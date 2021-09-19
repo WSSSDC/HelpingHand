@@ -20,6 +20,7 @@ TBD is an online IDE that is made to assist newcomers to computer science with c
  - Creating our own python backend that executes the code, and actively handles input/output
  - Creating our own API
  - Creating our own file structure for the users and allowing them to use multiple files for their development
+ - Providing the users with their own cloud storage and file manager which would allow them to use multiple files for their project.
 
 ## 📖 What we learned
  - Mutlrithreading in python
