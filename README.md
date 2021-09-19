@@ -41,7 +41,7 @@ HelpingHand is an online IDE that is made to assist newcomers to computer scienc
 TBA
 
 # 💻 Lines of Code
-XXX LOC for the react website, XXX for the python api & backend.
+37.5k LOC for the react website, 402 for the python api & backend.
 
 ## 🙇‍♂️ Acknowledgements
 We would like to thank Hack the North for the opportunity to come up with and create HelpingHand, we would also like to thank OpenAI for Codex and GPT-3.
