@@ -21,7 +21,7 @@ var pythonFormat = require('python-format');
 function App() {
 
   const [messages, setMessages] = useState([{
-    'message': "Hello! I'm your python mentor",
+    'message': "Hello! I'm your python mentor. Start commands with 'Write' if you want me to write the program for you. You can also ask me direct questions about programming!",
     'direction': 'from'
   }]);
 
@@ -138,7 +138,7 @@ function App() {
               <button className='runbtn' onClick={async () => {
                 runCode()
               }}>
-              <img src={iconLoading.includes('run') ? loadingIcon : runIcon}></img>
+                <img src={iconLoading.includes('run') ? loadingIcon : runIcon}></img>
             </button>
             </div>
             <div className='row'>
