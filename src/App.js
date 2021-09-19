@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {Controlled as CodeMirror} from 'react-codemirror2';
 import OpenAI from 'openai-api';
 import clearIcon from './icons/clear.svg';
@@ -31,6 +31,18 @@ function App() {
   const [iconLoading, setIconLoading] = useState([]);
   const [currentInput, setCurrentInput] = useState([]);
   const [oldOutputText, setOldOutputText] = useState([]);
+  const [needsInput, setNeedsInput] = useState(false);
+  const [files, setFiles] = useState([]);
+  const [selectedFile, setFile] = useState('x');
+  const [fileContent, setFileContent] = useState({
+    'x': {
+      'content': ''
+    }
+  });
+
+  useEffect(() => {
+    getFiles()
+  }, []);
 
   function removeItem(item) {
     setIconLoading(iconLoading.filter(e => e != item))
@@ -39,13 +51,73 @@ function App() {
   function addIcon(item) {
     setIconLoading(iconLoading.concat([item]))
   }
+
+  function getFiles() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", 'https://HTN21-Bridge-Mine.con266667.repl.co/files/getlist', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify({
+      id: '69420',
+    }));
+    xhr.onload = function() {
+      var filesReceived = JSON.parse(this.responseText)['output'].map(e => e.replace('tmp/69420/', ''));
+      setFiles(filesReceived);
+      setFile(filesReceived[0]);
+      getFileContent(filesReceived[0]);
+    }
+  }
+
+  function getFileContent(filename=selectedFile) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", 'https://HTN21-Bridge-Mine.con266667.repl.co/files/getcontent', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify({
+      id: '69420',
+      path: filename
+    }));
+    xhr.onload = function() {
+      if(!(filename in fileContent)) {
+        updateFile(filename, JSON.parse(this.responseText)['output']);
+      }
+    }
+  }
+
+  function updateFile(filename, content) {
+    var updatedContent = Object.assign({}, fileContent);
+    updatedContent[filename] = {
+      'content': content,
+      'open': true
+    };
+    setFileContent(updatedContent);
+    writeToFile(filename, content);
+  }
+
+  function writeToFile(filename=selectedFile, content=fileContent[selectedFile]) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", 'https://HTN21-Bridge-Mine.con266667.repl.co/files/write', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify({
+      id: '69420',
+      path: filename,
+      content: content
+    }));
+    xhr.onload = function() {
+      if(!(filename in fileContent)) {
+        updateFile(filename, JSON.parse(this.responseText)['output']);
+      }
+    }
+  }
  
-  const OPENAI_API_KEY = 'sk-vGvqOZulHcaa8JqIKEStF5EDFbmCxHuzM7ux2fcE';
+  const OPENAI_API_KEY = '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';
 
   const openai = new OpenAI(OPENAI_API_KEY);
 
   function isIllegalEdit(editor, data, value) {
     var lines = outputText.split('\n');
+
+    if(!needsInput) {
+      return true;
+    }
 
     if (data.from.line != lines.length - 1) {
       return true;
@@ -64,37 +136,40 @@ function App() {
   }
 
   function runCode(input = []) {
+    setNeedsInput(false);
+    if (input == []) {
+    setConsole('');
+    setOutput('');
+    }
     setCurrentInput(input);
-    console.log(input);
     addIcon('run');
       var xhr = new XMLHttpRequest();
       xhr.open("POST", 'https://HTN21-Bridge-Mine.con266667.repl.co/run', true);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.send(JSON.stringify({
-        code: tempCode,
+        code: fileContent[selectedFile]['content'],
         id: '12300',
         language: 'python',
         input: input
       }));
       xhr.onload = function() {
-        console.log(this.responseText)
         var data = JSON.parse(this.responseText);
-        console.log(data['output']);
         setConsole(data['output']);
         setOutput(data['output']);
         if (data['needs_input']) {
-          var newOldOutputs = [...oldOutputText, data['output'].replace('\n', '')];
-          setOldOutputText(newOldOutputs)
-          var newConsole = data['output'];
-          for (var i = 0; i < newOldOutputs.length - 1; i++) {
-            console.log(input[i])
-            newConsole = newConsole.replace( newOldOutputs[i], newOldOutputs[i] + input[i] + '\n')
-            // console.log(newOldOutputs[i]);
-            // console.log(newOldOutputs[i + 1])
-            // newConsole += newOldOutputs[i] + input[i] + '\n' + newOldOutputs[i + 1].replace(newOldOutputs[i], '');
-            setConsole(newConsole);
-            setOutput(newConsole);
-          }
+          setNeedsInput(true);
+        }
+        if (data['needs_input'] || input.length > 0) {
+        var newOldOutputs = [...oldOutputText, data['output'].replace('\n', '')];
+        setOldOutputText(newOldOutputs)
+        var newConsole = data['output'];
+        var startAt = 0;
+        for (var i = 0; i < newOldOutputs.length - 1; i++) {
+          newConsole = newConsole.replace(newOldOutputs[i].substring(startAt), newOldOutputs[i].substring(startAt) + input[i] + '\n')
+          startAt += newOldOutputs[i].length + 1;
+        }
+        setConsole(newConsole);
+        setOutput(newConsole);
         }
         removeItem('run');
       };
@@ -109,10 +184,27 @@ function App() {
       <div className="row h-100">
         <div className="col h-100">
           <div className="card border-0 shadow-lg editor h-100">
+          <div className='row tabs px-5 pt-2'>
+          {files.map(e => 
+            <div className={'col mb-0 card border-0 shadow-lg tab' + (selectedFile == e ? '' : 'tab-disabled')}>
+              <button style={{border: 'none', backgroundColor: 'transparent'}} onClick={() => {
+                setFile(e);
+                getFileContent(e);
+              }}>
+                <div className='row'>
+                  <div className='col-8'>
+                    {e}
+                  </div>
+                  <div className='col'><button style={{border: 'none', backgroundColor: 'transparent'}}>X</button></div>
+                  </div>
+              </button>
+             </div>
+          )}
+          </div>
           <div className='row'>
-            <div className='col-10'>
+            <div className='col-12'>
             <CodeMirror
-              value={tempCode}
+              value={selectedFile in fileContent && 'content' in fileContent[selectedFile] ? fileContent[selectedFile]['content'] : ''}
               className='CodeEditorArea'
               options={{
                 mode: 'python',
@@ -121,21 +213,21 @@ function App() {
               }}
               onBeforeChange={(editor, data, value) => {
                 // setTempCode(value)
-                //pythonFormat(value)
-                setTempCode(value);
-                
-              }}
-              onSelection={(editor, data) => {
-                // var selected = window.getSelection().toString();
-                // if(selected != '') {
-                //   console.log(selected);
+                // try {
+                  
+                //   setTempCode(pythonFormat(value));
+                // } catch {
+                //   setTempCode(value);
                 // }
+                updateFile(selectedFile, value)
               }}
             />
             </div>
-            <div className='col'>
+            <div className='col icons'>
               <div className='row'>
               <button className='runbtn' onClick={async () => {
+                setCurrentInput([]);
+                setOldOutputText([])
                 runCode()
               }}>
                 <img src={iconLoading.includes('run') ? loadingIcon : runIcon}></img>
@@ -146,7 +238,7 @@ function App() {
               addIcon('complete')
                 const gptResponse = await openai.complete({
                   engine: 'davinci-codex',
-                  prompt: tempCode,
+                  prompt: fileContent[selectedFile]['content'],
                   maxTokens: 64,
                   temperature: 0.9,
                   topP: 1,
@@ -158,7 +250,7 @@ function App() {
                   stop: ['"""']
               });
           
-              setTempCode(tempCode + gptResponse.data.choices[0].text);
+              updateFile(selectedFile, fileContent[selectedFile]['content'] + gptResponse.data.choices[0].text)
               removeItem('complete')
             }}>
               <img src={iconLoading.includes('complete') ? loadingIcon : completeIcon}></img>
@@ -172,7 +264,7 @@ function App() {
                   prompt: `##### Fix bugs in the below function
 
                   ### Buggy Python
-                  ${tempCode}
+                  ${fileContent[selectedFile]['content']}
 
                   ### Fixed Python
                   `
@@ -188,7 +280,7 @@ function App() {
                   stop: ['###']
               });
           
-              setTempCode(gptResponse.data.choices[0].text);
+              updateFile(selectedFile, gptResponse.data.choices[0].text);
               removeItem('fix')
             }}>
               <img src={iconLoading.includes('fix') ? loadingIcon : fixIcon}></img>
@@ -196,7 +288,7 @@ function App() {
             </div>
             <div className='row'>
               <button className='runbtn' onClick={() => {
-                setTempCode('');
+                updateFile(selectedFile, '')
                 setConsole('');
               }}>
               <img src={clearIcon}></img>
@@ -243,10 +335,10 @@ function App() {
                       }, ...messages])
 
                     if(verbCheck.check(input.split(' ')[0])) {
-                      console.log(`${tempCode}\n"""\n${input}\n"""`);
+                      console.log(`${fileContent[selectedFile]['content']}\n"""\n${input}\n"""`);
                       const gptResponse = await openai.complete({
                         engine: 'davinci-codex',
-                        prompt: `#Python 3\n${tempCode}\n"""\n${input}\n"""`,
+                        prompt: `#Python 3\n${fileContent[selectedFile]['content']}\n"""\n${input}\n"""`,
                         maxTokens: 120,
                         temperature: 0.9,
                         topP: 1,
@@ -257,7 +349,7 @@ function App() {
                         stream: false,
                         stop: ['"""', '\n\n\n']
                     });
-                    setTempCode(tempCode + gptResponse.data.choices[0].text)
+                    updateFile(selectedFile, fileContent[selectedFile]['content'] + gptResponse.data.choices[0].text)
                     setMessages([
                       {
                         'message': 'Done.',

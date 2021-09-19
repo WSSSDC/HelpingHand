@@ -30,17 +30,12 @@ textarea:focus {
 
 .CodeEditorArea {
   height: 70vh !important;
-  width: 90%;
+  width: 100%;
 }
 
 .ConsoleArea {
   border-top: 5px solid grey;
   height: 26.2vh !important;
-}
-
-.CodeEditorArea textarea, .CodeEditorArea > * {
-  border-top-left-radius: 25x !important;
-  border-top-right-radius: 25px !important;
 }
 
 .ConsoleArea textarea, .ConsoleArea > * {
@@ -110,4 +105,25 @@ hr {
 
 .to {
   text-align: end;
+}
+
+.tab {
+  border-radius: 0;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+  margin-left: 10px;
+  margin-bottom: 0;
+  border: black solid 5px;
+}
+
+.tab-disabled {
+  opacity: 0.5;
+}
+
+.icons {
+  position: absolute;
+  right: 45px;
+  width: 100px;
+  top: 15px;
+  z-index: 100;
 }
