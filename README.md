@@ -19,6 +19,7 @@ TBD is an online IDE with
  - Writing a React.js site, we mostly make flutter apps and we wanted to try and change it up a bit
  - Creating our own python backend that executes the code, and returns the output
  - Creating our own API
+ - Making our own file managing system
 
 ## 📖 What we learned
  - Mutlrithreading in python
@@ -31,7 +32,6 @@ TBD is an online IDE with
 ## 🤔 What's next for TBD
  - Add different themes
  - Integrate documentation for keywords in a tooltip
- - Add the ability to work with multiple files
  - Implement user accounts to allow for online saving of projects
  - Monetize, Monetize, Monetize
 
