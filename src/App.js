@@ -30,7 +30,7 @@ function App() {
   const [outputText, setOutput] = useState('');
   const [iconLoading, setIconLoading] = useState([]);
   const [currentInput, setCurrentInput] = useState([]);
-  const [currentInputLines, setCurrentInputLines] = useState([]);
+  const [oldOutputText, setOldOutputText] = useState([]);
 
   function removeItem(item) {
     setIconLoading(iconLoading.filter(e => e != item))
@@ -64,27 +64,39 @@ function App() {
   }
 
   function runCode(input = []) {
-    setCurrentInput(input)
+    setCurrentInput(input);
+    console.log(input);
     addIcon('run');
       var xhr = new XMLHttpRequest();
       xhr.open("POST", 'https://HTN21-Bridge-Mine.con266667.repl.co/run', true);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.send(JSON.stringify({
         code: tempCode,
-        id: '123000',
+        id: '12300',
         language: 'python',
         input: input
       }));
       xhr.onload = function() {
-          var data = JSON.parse(this.responseText);
-          console.log(data);
-          setConsole(data['output']);
-          setOutput(data['output']);
-          if (data['needs_input']) {
-            setCurrentInputLines(currentInputLines.concat([data['output'].split('\n').length - 1]))
-            console.log(currentInputLines.concat([data['output'].split('\n').length - 1]))
+        console.log(this.responseText)
+        var data = JSON.parse(this.responseText);
+        console.log(data['output']);
+        setConsole(data['output']);
+        setOutput(data['output']);
+        if (data['needs_input']) {
+          var newOldOutputs = [...oldOutputText, data['output'].replace('\n', '')];
+          setOldOutputText(newOldOutputs)
+          var newConsole = data['output'];
+          for (var i = 0; i < newOldOutputs.length - 1; i++) {
+            console.log(input[i])
+            newConsole = newConsole.replace( newOldOutputs[i], newOldOutputs[i] + input[i] + '\n')
+            // console.log(newOldOutputs[i]);
+            // console.log(newOldOutputs[i + 1])
+            // newConsole += newOldOutputs[i] + input[i] + '\n' + newOldOutputs[i + 1].replace(newOldOutputs[i], '');
+            setConsole(newConsole);
+            setOutput(newConsole);
           }
-          removeItem('run');
+        }
+        removeItem('run');
       };
       xhr.onerror = function() {
         alert("Server Error")
@@ -109,7 +121,8 @@ function App() {
               }}
               onBeforeChange={(editor, data, value) => {
                 // setTempCode(value)
-                setTempCode(pythonFormat(value));
+                //pythonFormat(value)
+                setTempCode(value);
                 
               }}
               onSelection={(editor, data) => {
